@@ -1,0 +1,30 @@
+<h1>Parking Prediction System</h1>
+
+<form action="/predict" method="POST">
+
+Zone <input name="Zone"><br>
+Pillar <input name="Pillar"><br>
+Slot <input name="Slot_Number"><br>
+Hour <input name="Hour"><br>
+Day <input name="Day"><br>
+
+Vehicle Type
+<select name="Vehicle_Type">
+<option value="0">Bike</option>
+<option value="1">Car</option>
+</select>
+
+User Type
+<select name="User_Type">
+<option value="0">Student</option>
+<option value="1">Staff</option>
+<option value="2">Visitor</option>
+</select>
+
+<br><br>
+
+<button type="submit">Predict</button>
+
+</form>
+
+<h2>{{result}}</h2>

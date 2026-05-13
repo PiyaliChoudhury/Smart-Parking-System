@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>SRM Smart Parking Dashboard</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body class="dashboard-body">
+
+<div class="dashboard-wrapper">
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<h2>🚗 University Parking</h2>
+
+<button onclick="showSection(event,'overview')" class="active">Dashboard</button>
+<button onclick="showSection(event,'prediction')">Parking Prediction</button>
+<button onclick="showSection(event,'map')">Parking Map</button>
+<button onclick="showSection(event,'directions')">Directions</button>
+<button onclick="showSection(event,'toll')">Toll Gate</button>
+<button onclick="showSection(event,'slots')">Slot Status</button>
+
+</div>
+
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<div class="main-content">
+
+<!-- ================= OVERVIEW ================= -->
+
+<div id="overview" class="section active-section">
+
+<h1>Smart Parking Control Panel</h1>
+
+<div class="stats">
+
+<div class="card">
+<h3>Total Slots</h3>
+<p>2500</p>
+</div>
+
+<div class="card">
+<h3>Available</h3>
+<p>1400</p>
+</div>
+
+<div class="card">
+<h3>Occupied</h3>
+<p>1100</p>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= PARKING PREDICTION ================= -->
+
+<div id="prediction" class="section">
+
+<h2>Parking Prediction</h2>
+
+<form action="/predict" method="POST" class="prediction-form">
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Zone</label>
+<input name="Zone" required>
+</div>
+
+<div class="form-group">
+<label>Pillar</label>
+<input name="Pillar" required>
+</div>
+
+</div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Slot Number</label>
+<input name="Slot_Number" required>
+</div>
+
+<div class="form-group">
+<label>Hour</label>
+<input type="number" name="Hour" min="0" max="23" required>
+</div>
+
+</div>
+
+<div class="form-row full-width">
+
+<div class="form-group">
+<label>Day</label>
+<input name="Day" placeholder="0=Mon ... 6=Sun" required>
+</div>
+
+</div>
+
+<div class="form-row">
+
+<div class="form-group">
+<label>Vehicle Type</label>
+<select name="Vehicle_Type">
+<option value="0">🏍️ Bike</option>
+<option value="1">🚗 Car</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>User Type</label>
+<select name="User_Type">
+<option value="0">👨‍🎓 Student</option>
+<option value="1">👨‍💼 Staff</option>
+<option value="2">👤 Visitor</option>
+</select>
+</div>
+
+</div>
+
+<button class="submit-btn">Predict Parking</button>
+
+</form>
+
+{% if result %}
+<div class="result-box">
+{{result}}
+</div>
+{% endif %}
+
+</div>
+
+
+<!-- ================= PARKING MAP ================= -->
+
+<div id="map" class="section">
+
+<h2>SRM Campus Parking Map</h2>
+
+<div class="map-container">
+
+<img src="/static/uni_map.png" class="campus-map">
+
+<div class="marker available" data-slot="Zone 1 | Pillar 12 | Slot 4" style="top:45%; left:35%;">P1</div>
+<div class="marker occupied" data-slot="Zone 2 | Pillar 7 | Slot 3" style="top:60%; left:55%;">P2</div>
+<div class="marker available" data-slot="Zone 3 | Pillar 20 | Slot 6" style="top:35%; left:65%;">P3</div>
+<div class="marker occupied" data-slot="Zone 4 | Pillar 5 | Slot 2" style="top:70%; left:25%;">P4</div>
+<div class="marker available" data-slot="Zone 5 | Pillar 14 | Slot 8" style="top:55%; left:20%;">P5</div>
+
+</div>
+
+<div class="map-legend">
+
+<span>
+<div class="green"></div> Available
+</span>
+
+<span>
+<div class="red"></div> Occupied
+</span>
+
+</div>
+
+</div>
+
+
+<!-- ================= DIRECTIONS ================= -->
+<div id="directions" class="section">
+
+<h2>Navigation to Parking Slot</h2>
+
+<div class="route">
+
+<h3>Campus Entry Gates</h3>
+
+<ul class="direction-list">
+
+<li>🚪 Gate A – Main Entrance</li>
+<li>🚪 Gate B – Hostel Entry</li>
+<li>🚪 Gate C – Academic Block Entry</li>
+<li>🚪 Gate D – Hospital Entry</li>
+
+</ul>
+
+<br>
+
+<h3>Parking Zones</h3>
+
+<ul class="direction-list">
+
+<li>🅿 Zone 1 – Academic Parking</li>
+<li>🅿 Zone 2 – Library Parking</li>
+<li>🅿 Zone 3 – Hostel Parking</li>
+<li>🅿 Zone 4 – Visitor Parking</li>
+<li>🅿 Zone 5 – Staff Parking</li>
+
+</ul>
+
+<br>
+
+<h3>Pillar Navigation</h3>
+
+<p>
+
+Each zone contains <b>50 pillars</b>.  
+Each pillar contains <b>10 parking slots</b>.
+
+</p>
+
+<br>
+
+<h3>Traffic Cones / Direction Markers</h3>
+
+<ul class="direction-list">
+
+<li>🔶 Cone A – Entry diversion</li>
+<li>🔶 Cone B – Zone split</li>
+<li>🔶 Cone C – Pillar direction</li>
+<li>🔶 Cone D – Exit direction</li>
+
+</ul>
+
+<br>
+
+<h3>Example Navigation Route</h3>
+
+<div class="route-box">
+
+🚪 Gate A  
+⬇  
+🔶 Cone B (Zone split)  
+⬇  
+🅿 Zone 3  
+⬇  
+🟫 Pillar 14  
+⬇  
+🚗 Slot 6
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= TOLL SYSTEM ================= -->
+
+<div id="toll" class="section">
+
+<h2>Toll Gate System</h2>
+
+<div class="toll-box">
+
+<form id="tollForm" onsubmit="return false">
+
+<label>Vehicle Number</label>
+<input id="vehicleNumber" placeholder="Enter vehicle number">
+
+<br><br>
+
+<label>Vehicle Type</label>
+
+<select id="vehicleType">
+<option value="bike">🏍 Bike</option>
+<option value="car">🚗 Car</option>
+<option value="bus">🚌 Bus</option>
+<option value="truck">🚛 Truck</option>
+</select>
+
+<br><br>
+
+<label>Parking Duration (Hours)</label>
+
+<input id="hours" type="number" min="1" max="24" placeholder="Enter hours">
+
+<br><br>
+
+<button type="button" onclick="calculateToll()">
+Calculate Toll
+</button>
+
+</form>
+
+
+<div id="tollResult" style="display:none;margin-top:25px;">
+
+<h3>Toll Summary</h3>
+
+<p id="vehicleDisplay"></p>
+<p id="amountDisplay"></p>
+<p id="timeDisplay"></p>
+
+<br>
+
+<h3>Select Payment Method</h3>
+
+<button onclick="payOnline()" class="submit-btn">Pay Online</button>
+<button onclick="payCash()" class="submit-btn">Pay Cash</button>
+
+</div>
+
+
+<div id="receipt" class="result-box" style="display:none;"></div>
+
+</div>
+
+</div>
+
+
+<!-- ================= SLOT STATUS ================= -->
+
+<div id="slots" class="section">
+
+<h2>Parking Slot Status</h2>
+
+<div class="parking-grid">
+
+🟢 🟢 🔴 🔴 🟢  
+🔴 🟢 🟢 🔴 🔴  
+🟢 🟢 🔴 🟢 🟢  
+
+</div>
+
+<p>
+<span>🟢 Available</span> |
+<span>🔴 Occupied</span>
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+function showSection(event,id){
+
+document.querySelectorAll(".section").forEach(sec=>{
+sec.classList.remove("active-section")
+})
+
+document.getElementById(id).classList.add("active-section")
+
+document.querySelectorAll(".sidebar button").forEach(btn=>{
+btn.classList.remove("active")
+})
+
+event.target.classList.add("active")
+
+}
+
+
+function calculateToll(){
+
+let vehicle=document.getElementById("vehicleNumber").value
+let type=document.getElementById("vehicleType").value
+let hours=parseInt(document.getElementById("hours").value)
+
+let rate=0
+
+if(type=="bike"){rate=10}
+if(type=="car"){rate=20}
+if(type=="bus"){rate=40}
+if(type=="truck"){rate=50}
+
+let amount=rate*hours
+
+document.getElementById("tollResult").style.display="block"
+
+document.getElementById("vehicleDisplay").innerHTML="Vehicle : "+vehicle
+document.getElementById("amountDisplay").innerHTML="Toll Amount : ₹"+amount
+document.getElementById("timeDisplay").innerHTML="Duration : "+hours+" hours"
+
+window.tollAmount=amount
+window.vehicle=vehicle
+
+}
+
+function payOnline(){
+
+document.getElementById("receipt").style.display="block"
+
+document.getElementById("receipt").innerHTML=
+"✅ Payment Successful (Online)<br><br>"+
+"Vehicle : "+window.vehicle+"<br>"+
+"Amount Paid : ₹"+window.tollAmount+"<br>"+
+"Transaction ID : TXN"+Math.floor(Math.random()*100000)
+
+}
+
+function payCash(){
+
+document.getElementById("receipt").style.display="block"
+
+document.getElementById("receipt").innerHTML=
+"💵 Pay Cash at Toll Booth<br><br>"+
+"Vehicle : "+window.vehicle+"<br>"+
+"Amount Due : ₹"+window.tollAmount
+
+}
+
+</script>
+
+</body>
+</html>
